@@ -149,3 +149,59 @@ dbt uses **Jinja** as a templating engine to make SQL **dynamic and reusable**.
 In simple terms:
 > Jinja allows me to write SQL that adapts based on variables, environments, and configurations, instead of being hard-coded.
 
+## Silver Layer
+
+After the bronze layer, where the data is cleaned and standardized, the next step is the **silver layer**.
+
+The silver layer is where the data becomes **business-ready**. At this stage, the data is already clean, so the focus shifts to **structure, enrichment, and efficiency**, rather than basic cleaning.
+
+---
+
+### Materialization in the Silver Layer
+
+In this project, silver models are **materialized as incremental tables**.
+
+Incremental materialization means:
+- The table is created once
+- On subsequent runs, only **new or updated records** are processed
+- Existing data is preserved
+
+This is especially useful in real-world projects where data grows over time and full refreshes would be expensive.
+
+---
+
+### Incremental Keys (Unique Keys)
+
+Each incremental model uses a **unique key** to identify records.
+
+Examples:
+- `booking_id` for bookings
+- `listing_id` for listings
+- `host_id` for hosts
+
+The unique key allows dbt to:
+- Detect new records
+- Update existing ones when needed
+- Avoid duplicates
+
+This makes the silver layer reliable and idempotent.
+
+---
+
+## What was done in the Silver Layer
+
+Even though the data is clean after bronze, silver is where meaningful improvements happen.
+
+
+###  Added Derived Columns 
+
+Silver is the right place for **simple derived fields**, such as:
+- `total_booking_cost = booking_amount + cleaning_fee + service_fee`
+- `is_long_stay = nights_booked >= 7`
+- `is_active_listing`
+
+These are reusable fields that gold models can build upon.
+
+## Using Macros in the Silver Layer
+To make the project more professional and reusable, macros is introduced in the silver layer.
+
