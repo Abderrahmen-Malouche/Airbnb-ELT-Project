@@ -205,3 +205,186 @@ These are reusable fields that gold models can build upon.
 ## Using Macros in the Silver Layer
 To make the project more professional and reusable, macros is introduced in the silver layer.
 
+## Metadata-Driven Pipelines
+
+As data pipelines grow in size and complexity, hardcoding logic directly into SQL models becomes difficult to maintain. This is where **metadata-driven pipelines** come into play.
+
+A metadata-driven pipeline is a pipeline where **behavior is controlled by configuration and metadata**, rather than by rewriting transformation logic every time requirements change.
+
+---
+
+### What Is Metadata?
+
+Metadata is “data about data”. In a data pipeline, metadata can include:
+- Which tables should be processed
+- Load types (full vs incremental)
+- Column-level rules
+- Business thresholds
+- Enable/disable flags
+- Freshness expectations
+
+Instead of embedding these rules directly in SQL, they are stored in:
+- YAML files
+- Seed tables
+- Configuration models
+- dbt variables
+
+---
+
+### Why Metadata-Driven Pipelines Became Popular
+
+Metadata-driven pipelines became popular as companies faced several challenges:
+
+- **Too much duplicated logic**  
+  The same SQL patterns repeated across models.
+
+- **Frequent requirement changes**  
+  Business rules changed faster than engineers could rewrite code.
+
+- **Scalability issues**  
+  Adding new datasets required copying and modifying existing pipelines.
+
+- **Maintenance overhead**  
+  Small changes required touching many models.
+
+Metadata-driven design addresses these problems by **separating logic from configuration**.
+
+---
+
+### How This Relates to dbt
+
+dbt naturally supports metadata-driven pipelines through:
+- YAML files
+- Variables (`var()`)
+- Macros
+- Seeds
+- Model configurations
+
+Instead of changing SQL, you change metadata — and dbt adapts the pipeline behavior automatically.
+
+---
+
+### Examples in This Project
+
+Even in this project, metadata-driven concepts are already being used:
+
+- **Materializations** defined in `dbt_project.yml`
+- **Incremental logic** controlled by configuration
+- **Macros** that apply reusable logic
+- **Sources** defined declaratively in YAML
+- **Business rules** abstracted into macros
+
+These are all early forms of metadata-driven design.
+
+---
+
+### Metadata-Driven Gold Layer
+
+In the gold layer, metadata-driven design becomes especially powerful.
+
+Examples:
+- Defining which dimensions should be included in the OBT
+- Controlling aggregation levels through configuration
+- Managing KPI definitions centrally
+- Toggling metrics on/off without rewriting SQL
+
+This allows analytics models to evolve without breaking downstream consumers.
+
+---
+
+### Why Metadata-Driven Pipelines Are a Good Practice
+
+- **Flexibility**  
+  Pipelines adapt to change without code rewrites.
+
+- **Reusability**  
+  One macro or model can serve many datasets.
+
+- **Consistency**  
+  Business logic is applied uniformly.
+
+- **Scalability**  
+  New sources or metrics can be added easily.
+
+- **Maintainability**  
+  Less code, fewer bugs, easier reviews.
+
+---
+
+### How This Complements the OBT
+
+The One Big Table (OBT) provides a **stable, analytics-ready output**.
+
+Metadata-driven design ensures:
+- The OBT can evolve safely
+- Metrics can be added or modified without refactoring
+- The pipeline remains clean and extensible
+
+Together, they form a robust and production-oriented gold layer.
+
+
+
+# Gold Layer: From OBT to Fact & Dimension Tables (Using Snapshots – SCD Type 2)
+
+After building the **OBT (One Big Table)** in the gold layer, the next logical step is to design **analytics-ready models**:  
+**fact tables** and **dimension tables**.
+
+In this project, I chose to use **snapshots** to handle **Slowly Changing Dimensions (SCD Type 2)**, because some entities (like hosts or listings) can change over time, and I want to **preserve history**, not overwrite it.
+
+## What Is Slowly Changing Dimension (Type 2)?
+
+SCD Type 2 means:
+
+- We **do not overwrite old values**
+- Every change creates a **new row**
+- We track:
+  - when the record was valid
+  - which record is current
+
+So instead of losing history, we keep it.
+
+Example (Host response rate changes):
+
+| host_id | response_rate | valid_from | valid_to   | is_current |
+|---------|---------------|------------|------------|------------|
+| 123     |       85      | 2023-01-01 | 2024-03-01 |    false   |
+| 123     |       92      | 2024-03-01 |    NULL    |    true    |
+
+---
+
+## Why Use Snapshots for SCD Type 2
+
+Snapshots are designed exactly for this use case.
+
+They:
+- Compare current data vs previous state
+- Detect changes automatically
+- Store historical versions
+- Add metadata columns for time validity
+
+Instead of writing complex merge logic, dbt handles it.
+
+---
+
+## What a Snapshot Is (Conceptually)
+
+A snapshot:
+- Runs on a schedule
+- Looks at a **source query**
+- Tracks changes based on a **unique key**
+- Saves versions when values change
+
+It creates a **history table**, not a model you overwrite.
+
+---
+
+## Snapshot Strategy Choices
+
+There are two main snapshot strategies:
+
+### 1. Timestamp Strategy
+Use when you have a reliable `updated_at` column.
+
+```sql
+strategy: timestamp
+updated_at: updated_at
