@@ -1,6 +1,6 @@
 # End-to-End Cloud ELT Pipeline with AWS, Snowflake, dbt
 
-![ELT Architecture Diagram](architecture diagram.png)
+![End-to-End ELT Architecture](architecture%20diagram.png)
 
 ## Project Overview
 
