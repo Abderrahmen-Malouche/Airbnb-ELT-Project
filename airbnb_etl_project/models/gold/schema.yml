@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: fact_bookings
+    columns:
+      - name: booking_amount
+        tests:
+          - positive_number
+
+      - name: cleaning_fee
+        tests:
+          - positive_number
+
+      - name: service_fee
+        tests:
+          - positive_number
+
+      - name: total_amount
+        tests:
+          - positive_number
+
+      - name: nights_booked
+        tests:
+          - positive_number
+
+  - name: dim_hosts
+    columns:
+      - name: response_rate
+        tests:
+          - percentage_range
