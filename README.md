@@ -88,11 +88,17 @@ Reusable dbt macros are implemented to standardize transformations and testing l
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:Abderrahmen-Malouche/Airbnb-ELT-Project.git
 2. Configure Snowflake credentials in profiles.yml
 3. Install dependencies:
-  dbt deps
+  ```bash
+     dbt deps
+  ```
 4. Run transformations:
+  ```bash
   dbt run
-5. Run data quality tests:
+  ```
+6. Run data quality tests:
+  ```bash
   dbt test
+  ```
