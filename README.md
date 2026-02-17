@@ -1,11 +1,11 @@
-# End-to-End Cloud ELT Pipeline with AWS, Snowflake, dbt, and BI Analytics
+# End-to-End Cloud ELT Pipeline with AWS, Snowflake, dbt
 
 ## Project Overview
 
 This project demonstrates the design and implementation of a modern, end-to-end cloud ELT (Extract, Load, Transform) data pipeline using industry-standard data engineering tools.  
 Raw Airbnb booking, listing, and host data is ingested from Amazon S3 into Snowflake, transformed using dbt following a medallion architecture (Bronze, Silver, Gold), and modeled into analytics-ready fact and dimension tables.
 
-The project emphasizes scalability, data quality, modular transformations, and analytics usability, reflecting real-world data engineering best practices.
+The project emphasizes scalability, data quality, modular transformations, and the usability of analytics, reflecting real-world data engineering best practices.
 
 ---
 
@@ -17,7 +17,6 @@ The project emphasizes scalability, data quality, modular transformations, and a
 - **Data Modeling:** Dimensional Modeling (Facts & Dimensions)  
 - **Data Quality:** dbt built-in and custom generic tests  
 - **Version Control:** Git & GitHub  
-- **Analytics / BI:** Dashboards built on curated Gold models  
 
 ---
 
