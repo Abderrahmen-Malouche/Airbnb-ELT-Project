@@ -1,5 +1,7 @@
 # End-to-End Cloud ELT Pipeline with AWS, Snowflake, dbt
 
+![ELT Architecture Diagram](architecture diagram.png)
+
 ## Project Overview
 
 This project demonstrates the design and implementation of a modern, end-to-end cloud ELT (Extract, Load, Transform) data pipeline using industry-standard data engineering tools.  
